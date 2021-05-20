@@ -8,3 +8,18 @@ html, body  {
   margin: 0;
   padding: 0;
 }
+
+#myPopup {
+  height: 700px;
+  width: 800px;
+  background-color: transparent;
+  position: fixed;
+  top: 0;
+  border: 3px solid #f1f1f1;
+  z-index: 999;
+  display: none;
+}
+
+.popup {
+  padding-left: 200px;
+}
