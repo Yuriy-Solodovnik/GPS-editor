@@ -15,6 +15,8 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
 }).addTo(myMap);
 
+
+
 displayPath(points);
 
 function replacePoint(oldPoint, newPoint)
@@ -38,12 +40,19 @@ function onClick(e)
     findNearestPoint([e.latlng.lng, e.latlng.lat]);
     if(currentMarker===null)
     {
-        currentMarker = new L.Marker([chosenPoint[1], chosenPoint[0]]);
+        currentMarker = new L.Marker([chosenPoint[1], chosenPoint[0]], {draggable: true});
+        currentMarker.on('dragend', dragendMarker);
     }
     currentMarker.addTo(myMap);
-    document.getElementById("latitude").value = chosenPoint[1];
-    document.getElementById("longitude").value = chosenPoint[0];
     popup.style.display = "block";
+}
+
+function dragendMarker(e)
+{
+    let marker = e.target;
+    let position = marker.getLatLng();
+    replacePoint(chosenPoint, [position.lng, position.lat]);
+    changeLocation();
 }
 
 function findNearestPoint(lnglat)
@@ -60,19 +69,16 @@ function findNearestPoint(lnglat)
     }
 }
 
-function clearPopup()
+function deleteMarker()
 {
-    document.getElementById("longitude").value = null;
-    document.getElementById("latitude").value = null;
-    popup.style.display = "none";
     myMap.removeLayer(currentMarker);
     currentMarker = null;
+    popup.style.display = "none";
 }
 function changeLocation()
 {
-    replacePoint(chosenPoint, [document.getElementById("longitude").value, document.getElementById("latitude").value])
     myMap.removeLayer(pathLayer);
-    clearPopup();
+    deleteMarker();
     displayPath(points);
 }
 
