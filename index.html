@@ -12,7 +12,23 @@
     <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
 </head>
 <body>
+    <header>
+        <h3>GPS Editor</h3>
+        <div id="editBox">
+            <button  onclick="back()">B</button>
+            <button  onclick="next()">N</button>
+            <button id="addPointBtn" onclick="addPoint()">Добавить  точку</button>
+        </div>
+        <div id="fileBox">
+            <input id="gpx-file" type="file" accept=".gpx" onChange="setLocation()"/>
+            <button  onclick="save()">Сохранить</button>
+        </div>
+    </header>
     <div id="map"></div>
+    <div>
+        <label>Дистанция (км)</label>
+        <span id="distance"></span>
+    </div>  
     <div id="myPopup" class="popup">
         <div class="popup-content">
             <div class="popup-header">

@@ -2,12 +2,47 @@
   font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+header {
+  margin: 2%;
+  display: flex;
+  justify-content: space-between; 
+  letter-spacing: 3px;
+  height: 45px;
+  border-radius: 10px;
+  background: rgb(54, 71, 204);
+  color: #fff;
+}
+
+header h3, button, input {
+  margin: 10px;
+  border-radius: 10px;
+}
+
+#fileBox button, input {
+  background-color: rgb(141, 211, 29);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+#editBox button, input {
+  background-color: rgb(0, 208, 255);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
 #map  {
-  height: 700px;
-  width: 70%;
+  border-radius: 10px;
+  margin: 2%;
+  height: 80%;
+  width: 96%;
+  border: 1px solid rgb(54, 71, 204);
 }
 
 html, body  {
+  background-image: url("https://img.freepik.com/free-photo/grungy-white-background-of-natural-cement-or-stone-old-texture_1258-28352.jpg?size=626&ext=jpg");
+  background-size: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -25,14 +60,20 @@ html, body  {
   background-color: rgba(54, 71, 204, 0.9);
   border: 3px solid rgb(0, 0, 0);
 }
+
+#editBox {
+  display: none;
+}
+
 #myPopup {
-  height: 100px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  height: 110px;
   width: 400px;
   background-color: rgba(255, 255, 255, 0.475);
   position: absolute;
   text-align: center;
   border-radius: 10px;
-  top: 0;
+  top: 110px;
   left: 35%;
   border: 3px solid rgba(54, 71, 204, 0.2);
   z-index: 999;
@@ -42,9 +83,9 @@ html, body  {
 
 @keyframes fromTop {
   0% {
-    top: -100px;
+    top: -5px;
   }
   100% {
-    top: 0px;
+    top: 110px;
   }
 }
