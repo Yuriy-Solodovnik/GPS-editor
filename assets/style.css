@@ -7,7 +7,6 @@ header {
   display: flex;
   justify-content: space-between; 
   letter-spacing: 3px;
-  height: 45px;
   border-radius: 10px;
   background: rgb(54, 71, 204);
   color: #fff;
@@ -32,12 +31,19 @@ header h3, button, input {
   font-size: 13px;
 }
 
-#map  {
+#map {
   border-radius: 10px;
   margin: 2%;
   height: 80%;
   width: 96%;
   border: 1px solid rgb(54, 71, 204);
+}
+
+#info {
+  position: absolute;
+  margin: 3%;
+  top: 85%;
+  z-index: 999;
 }
 
 html, body  {

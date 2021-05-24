@@ -23,6 +23,8 @@ function setLocation()
     document.getElementById("editBox").style.display = "block";
 }
 
+displayPath(points);
+
 function addPoint()
 {
     addNewPoint = true;
@@ -31,18 +33,30 @@ function addPoint()
     button.disabled = true;
 }
 
+function deletePoint()
+{
+    var index = points.indexOf(chosenPoint);
+
+    if (index !== -1)
+    {
+        points.splice(index, 1);
+    }
+    changeLocation();
+}
+
 function save()
 {
    
 }
 
-displayPath(points);
+
 
 function replacePoint(oldPoint, newPoint)
 {
     var index = points.indexOf(oldPoint);
 
-    if (index !== -1) {
+    if (index !== -1) 
+    {
         points[index] = newPoint;
     }
 }
@@ -52,7 +66,7 @@ function displayPath(points)
     let path = turf.lineString(points);
     pathLayer = L.geoJSON(path).addTo(myMap);
     pathLayer.on('click', onPathClick);
-    document.getElementById("distance").textContent = (turf.lineDistance(path) * 1.60934).toFixed(3);
+    document.getElementById("distance").textContent = (turf.length(path, {units: 'kilometers'})).toFixed(3);
 }
 
 function onPathClick(e)
@@ -60,47 +74,31 @@ function onPathClick(e)
     if(addNewPoint)
     {
         addPointToArray([e.latlng.lng, e.latlng.lat]);
-        if(currentMarker===null)
-        {
-            currentMarker = new L.Marker([chosenPoint[1], chosenPoint[0]], {draggable: true});
-            currentMarker.on('dragend', dragendMarker);
-            popup.style.display = "block";
-            currentMarker.addTo(myMap);
-        }
         addNewPoint = false;
     }
     else
     {
         findNearestPoint([e.latlng.lng, e.latlng.lat]);
-        if(currentMarker===null)
+    }  
+    if(currentMarker===null)
         {
             currentMarker = new L.Marker([chosenPoint[1], chosenPoint[0]], {draggable: true});
             currentMarker.on('dragend', dragendMarker);
             popup.style.display = "block";
             currentMarker.addTo(myMap);
-        }
-    }   
+        } 
 }
 
 function getScale(a, b, c)
 {
     let p = (a + b + c)/2;
+    console.log(a - (b + c))
     return Math.sqrt(p*(p-a)*(p-b)*(p-c));
 }
 
 function addPointToArray(lnglat)
 {
-    let nearWay = Infinity;
-    for (let i = 0; i < points.length; i++) 
-    {
-        let currentWay = getDistanceFromLatLonInKm(points[i][1], points[i][0],lnglat[1],lnglat[0]);
-        if(currentWay < nearWay)
-        {
-            nearWay = currentWay;
-            chosenPoint = points[i];
-            addIndex = i;
-        }
-    }
+    findNearestPoint(lnglat);
     if(addIndex < points.length - 1 && addIndex > 0)
     {
         let fromPrevious = getScale(
@@ -113,6 +111,7 @@ function addPointToArray(lnglat)
                             getDistanceFromLatLonInKm(chosenPoint[1], chosenPoint[0], lnglat[1], lnglat[0]), 
                             getDistanceFromLatLonInKm(points[addIndex + 1][1], points[addIndex + 1][0], lnglat[1], lnglat[0])
                             );
+                            console.log(`${fromPrevious} + ${fromNext}`);
         fromNext < fromPrevious ? addIndex = 1 : addIndex = 0;
     }
     else
@@ -121,9 +120,6 @@ function addPointToArray(lnglat)
     }
     points.splice(points.indexOf(chosenPoint) + addIndex, 0, lnglat);
     chosenPoint = lnglat;
-    let button = document.getElementById("addPointBtn");
-    button.innerHTML = "Добавить  точку";
-    button.disabled = false;
 }
 
 function dragendMarker(e)
@@ -132,18 +128,22 @@ function dragendMarker(e)
     let position = marker.getLatLng();
     replacePoint(chosenPoint, [position.lng, position.lat]);
     changeLocation();
+    let button = document.getElementById("addPointBtn");
+    button.innerHTML = "Добавить  точку";
+    button.disabled = false;
 }
 
 function findNearestPoint(lnglat)
 {
     let nearWay = Infinity;
-    for (point of points) 
+    for (let i = 0; i < points.length; i++) 
     {
-        let currentWay = getDistanceFromLatLonInKm(point[1], point[0],lnglat[1],lnglat[0]);
+        let currentWay = getDistanceFromLatLonInKm(points[i][1], points[i][0], lnglat[1],lnglat[0]);
         if(currentWay < nearWay)
         {
             nearWay = currentWay;
-            chosenPoint = point;
+            chosenPoint = points[i];
+            addIndex = i;
         }
     }
 }
