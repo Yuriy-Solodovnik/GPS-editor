@@ -6,8 +6,7 @@ let chosenPoint = null;
 let currentMarker = null;
 let pathLayer = null;
 let tempPoints;
-let points = [[36.196293, 50.059933], [36.196514, 50.059841], [36.196846, 50.059978], [36.197269, 50.060081], [36.197456, 50.060120], [36.197651, 50.060276], [36.197758, 50.060398],
- [36.198219, 50.060204], [36.198448, 50.060215], [36.198891, 50.060062], [36.199409, 50.059849], [36.200321, 50.059753], [36.200386, 50.059776], [36.200531, 50.059757]];
+let points = null;
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 25,
@@ -17,14 +16,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
 }).addTo(myMap);
 
-function setLocation()
-{
-    myMap.setView([points[0][1], points[0][0]], 18);
-    document.getElementById("editBox").style.display = "block";
-}
-
-displayPath(points);
-
 function addPoint()
 {
     addNewPoint = true;
@@ -32,6 +23,7 @@ function addPoint()
     button.innerHTML = "Выберите место";
     button.disabled = true;
 }
+
 
 function deletePoint()
 {
@@ -44,17 +36,9 @@ function deletePoint()
     changeLocation();
 }
 
-function save()
-{
-   
-}
-
-
-
 function replacePoint(oldPoint, newPoint)
 {
     var index = points.indexOf(oldPoint);
-
     if (index !== -1) 
     {
         points[index] = newPoint;
@@ -86,13 +70,12 @@ function onPathClick(e)
             currentMarker.on('dragend', dragendMarker);
             popup.style.display = "block";
             currentMarker.addTo(myMap);
-        } 
-}
+        }
+    }   
 
 function getScale(a, b, c)
 {
     let p = (a + b + c)/2;
-    console.log(a - (b + c))
     return Math.sqrt(p*(p-a)*(p-b)*(p-c));
 }
 
@@ -111,7 +94,6 @@ function addPointToArray(lnglat)
                             getDistanceFromLatLonInKm(chosenPoint[1], chosenPoint[0], lnglat[1], lnglat[0]), 
                             getDistanceFromLatLonInKm(points[addIndex + 1][1], points[addIndex + 1][0], lnglat[1], lnglat[0])
                             );
-                            console.log(`${fromPrevious} + ${fromNext}`);
         fromNext < fromPrevious ? addIndex = 1 : addIndex = 0;
     }
     else
@@ -154,6 +136,7 @@ function deleteMarker()
     currentMarker = null;
     popup.style.display = "none";
 }
+
 function changeLocation()
 {
     myMap.removeLayer(pathLayer);
@@ -173,9 +156,65 @@ function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2)
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     let d = R * c;
     return d;
-  }
+}
   
-  function degToRad(deg) 
-  {
+function degToRad(deg) 
+{
     return deg * (Math.PI/180)
-  }
+}
+
+function readFromFile(input)
+{
+    let file = input.files[0];
+  
+    let reader = new FileReader();
+  
+    try
+    {
+    reader.readAsText(file);
+    }
+    catch
+    {
+        alert("Не удалось прочитать файл");
+    }
+  
+    reader.onload = function() 
+    {
+        let parser = new DOMParser();
+        fillArray(parser.parseFromString(reader.result, "text/xml"));
+        setLocation()
+    };
+}
+
+function fillArray(xmlDoc)
+{
+    let rows = xmlDoc.getElementsByTagName("trkpt")
+    points = new Array(rows.length);
+    for (let i = 0; i < rows.length; i++)
+    {
+        points[i] = [Number(rows[i].getAttribute("lon")), Number(rows[i].getAttribute("lat"))];
+    }
+}
+
+function setLocation()
+{
+    try
+    {
+        if(pathLayer!=null)
+        {
+            myMap.removeLayer(pathLayer);
+        }
+        myMap.setView([points[0][1], points[0][0]], 18);
+        document.getElementById("editBox").style.display = "block";
+        displayPath(points);
+    }
+    catch
+    {
+        alert("Не удалось загрузить данные");
+    }
+}
+
+function save()
+{
+   
+}

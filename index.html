@@ -20,7 +20,7 @@
             <button id="addPointBtn" onclick="addPoint()">Добавить  точку</button>
         </div>
         <div id="fileBox">
-            <input id="gpx-file" type="file" accept=".gpx" onChange="setLocation()"/>
+            <input id="gpx-file" type="file" accept=".gpx" onChange="readFromFile(this)"/>
             <button  onclick="save()">Сохранить</button>
         </div>
     </header>
