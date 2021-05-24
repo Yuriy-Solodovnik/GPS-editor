@@ -16,8 +16,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
 }).addTo(myMap);
 
-
-
 function addPoint()
 {
     addNewPoint = true;
@@ -26,11 +24,23 @@ function addPoint()
     button.disabled = true;
 }
 
+
+function deletePoint()
+{
+    var index = points.indexOf(chosenPoint);
+
+    if (index !== -1)
+    {
+        points.splice(index, 1);
+    }
+    changeLocation();
+}
+
 function replacePoint(oldPoint, newPoint)
 {
     var index = points.indexOf(oldPoint);
-
-    if (index !== -1) {
+    if (index !== -1) 
+    {
         points[index] = newPoint;
     }
 }
@@ -40,7 +50,7 @@ function displayPath(points)
     let path = turf.lineString(points);
     pathLayer = L.geoJSON(path).addTo(myMap);
     pathLayer.on('click', onPathClick);
-    document.getElementById("distance").textContent = (turf.lineDistance(path) * 1.60934).toFixed(3);
+    document.getElementById("distance").textContent = (turf.length(path, {units: 'kilometers'})).toFixed(3);
 }
 
 function onPathClick(e)
@@ -48,19 +58,13 @@ function onPathClick(e)
     if(addNewPoint)
     {
         addPointToArray([e.latlng.lng, e.latlng.lat]);
-        if(currentMarker===null)
-        {
-            currentMarker = new L.Marker([chosenPoint[1], chosenPoint[0]], {draggable: true});
-            currentMarker.on('dragend', dragendMarker);
-            popup.style.display = "block";
-            currentMarker.addTo(myMap);
-        }
         addNewPoint = false;
     }
     else
     {
         findNearestPoint([e.latlng.lng, e.latlng.lat]);
-        if(currentMarker===null)
+    }  
+    if(currentMarker===null)
         {
             currentMarker = new L.Marker([chosenPoint[1], chosenPoint[0]], {draggable: true});
             currentMarker.on('dragend', dragendMarker);
@@ -68,7 +72,6 @@ function onPathClick(e)
             currentMarker.addTo(myMap);
         }
     }   
-}
 
 function getScale(a, b, c)
 {
@@ -78,17 +81,7 @@ function getScale(a, b, c)
 
 function addPointToArray(lnglat)
 {
-    let nearWay = Infinity;
-    for (let i = 0; i < points.length; i++) 
-    {
-        let currentWay = getDistanceFromLatLonInKm(points[i][1], points[i][0],lnglat[1],lnglat[0]);
-        if(currentWay < nearWay)
-        {
-            nearWay = currentWay;
-            chosenPoint = points[i];
-            addIndex = i;
-        }
-    }
+    findNearestPoint(lnglat);
     if(addIndex < points.length - 1 && addIndex > 0)
     {
         let fromPrevious = getScale(
@@ -125,13 +118,14 @@ function dragendMarker(e)
 function findNearestPoint(lnglat)
 {
     let nearWay = Infinity;
-    for (point of points) 
+    for (let i = 0; i < points.length; i++) 
     {
-        let currentWay = getDistanceFromLatLonInKm(point[1], point[0],lnglat[1],lnglat[0]);
+        let currentWay = getDistanceFromLatLonInKm(points[i][1], points[i][0], lnglat[1],lnglat[0]);
         if(currentWay < nearWay)
         {
             nearWay = currentWay;
-            chosenPoint = point;
+            chosenPoint = points[i];
+            addIndex = i;
         }
     }
 }
