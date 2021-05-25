@@ -15,9 +15,10 @@
     <header>
         <h3>GPS Editor</h3>
         <div id="editBox">
-            <button  onclick="back()">B</button>
-            <button  onclick="next()">N</button>
+            <button id="previousBtn" onclick="back()"></button>
+            <button id="nextBtn" onclick="next()"></button>
             <button id="addPointBtn" onclick="addPoint()">Добавить  точку</button>
+            <button id="deletePointBtn" onclick="deletePoint()">Удалить точку</button>
         </div>
         <div id="fileBox">
             <input id="gpx-file" type="file" accept=".gpx" onChange="readFromFile(this)"/>
@@ -29,17 +30,23 @@
         <label>Дистанция (км)</label>
         <span id="distance"></span>
     </div>  
-    <div id="myPopup" class="popup">
+    <div id="editPopup" class="popup">
         <div class="popup-content">
             <div class="popup-header">
                 <h3>Перетащите маркер на новую позицию</h3>
             </div>
             <div class="popup-body">
                 <button class="popup-button" onclick="deleteMarker()">Отмена</button>
-                <button class="popup-button" onclick="deletePoint()">Удалить</button>
             </div>
         </div>
     </div>  
+    <div id="deletePopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3>Выберите точку</h3>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="assets/script.js"></script>
 </html>

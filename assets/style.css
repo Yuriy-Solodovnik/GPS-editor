@@ -75,10 +75,32 @@ html, body  {
   display: none;
 }
 
-#myPopup {
-  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+#editPopup {
   height: 110px;
   width: 400px;
+}
+
+#deletePopup {
+  height: 50px;
+  width: 300px;
+}
+
+#previousBtn {
+  width: 30px;
+  height: 30px;
+  background-image: url("images/a2.png");
+  background-position: -38px -34px;
+}
+
+#nextBtn {
+  width: 30px;
+  height: 30px;
+  background-image: url("images/a2.png");
+  background-position: 1px -34px;
+}
+
+.popup {
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
   background-color: rgba(255, 255, 255, 0.475);
   position: absolute;
   text-align: center;

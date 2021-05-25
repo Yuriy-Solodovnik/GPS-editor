@@ -1,21 +1,16 @@
 let myMap = L.map("map").setView([47.563, 24.1130], 3);
-let popup = document.getElementById("myPopup");
+let editPopup = document.getElementById("editPopup");
+let deletePopup = document.getElementById("deletePopup");
 let saveBtn = document.getElementById("save");
 let addIndex, xmlFile;
-let addNewPoint = false;
+let addNewPoint = false, deleteSomePoint = false;
 let chosenPoint = null;
 let currentMarker = null;
 let pathLayer = null;
-let tempPoints;
+let tempPoints = [];
 let points = null;
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 25,
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1,
-    accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
-}).addTo(myMap);
+
+clearMap();
 saveBtn.disabled = true;
 
 function addPoint()
@@ -29,18 +24,13 @@ function addPoint()
 
 function deletePoint()
 {
-    var index = points.indexOf(chosenPoint);
-
-    if (index !== -1)
-    {
-        points.splice(index, 1);
-    }
-    changeLocation();
+    deleteSomePoint = true;
+    deletePopup.style.display = "block";
 }
 
 function replacePoint(oldPoint, newPoint)
 {
-    var index = points.indexOf(oldPoint);
+    let index = points.indexOf(oldPoint);
     if (index !== -1) 
     {
         points[index] = newPoint;
@@ -61,19 +51,16 @@ function onPathClick(e)
     {
         addPointToArray([e.latlng.lng, e.latlng.lat]);
         addNewPoint = false;
-    }
-    else
-    {
-        findNearestPoint([e.latlng.lng, e.latlng.lat]);
-    }  
-    if(currentMarker===null)
+    
+        if(currentMarker===null)
         {
-            currentMarker = new L.Marker([chosenPoint[1], chosenPoint[0]], {draggable: true});
+            showMarker(chosenPoint);
             currentMarker.on('dragend', dragendMarker);
-            popup.style.display = "block";
+            editPopup.style.display = "block";
             currentMarker.addTo(myMap);
         }
-    }   
+    } 
+}  
 
 function getScale(a, b, c)
 {
@@ -132,21 +119,118 @@ function findNearestPoint(lnglat)
     }
 }
 
+function showWayPoint(location)
+{
+    let wayPoint  = new L.Marker([location[1], location[0]], {
+        icon: L.icon({
+            
+            iconUrl: "assets/images/myMarker.png",
+            iconSize: [15, 15],
+            iconAnchor: [7.5, 7.5],
+        })}).addTo(myMap);
+    wayPoint.on('click', wayPointClick);
+}
+function showMarker(location)
+{
+    currentMarker = new L.Marker([location[1], location[0]], {icon: L.icon({
+                
+        iconUrl: "assets/images/currentMarker.png",
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+    }), draggable: true});
+    currentMarker.on('dragend', dragendMarker);
+    editPopup.style.display = "block";
+    currentMarker.addTo(myMap);
+}
 function deleteMarker()
 {
-    myMap.removeLayer(currentMarker);
+    if(!deleteSomePoint && currentMarker!==null)
+    {
+        let currentPoint = currentMarker.getLatLng();
+        showWayPoint([currentPoint.lng, currentPoint.lat]);
+        myMap.removeLayer(currentMarker);
+    }
     currentMarker = null;
-    popup.style.display = "none";
+    editPopup.style.display = "none";
     let button = document.getElementById("addPointBtn");
     button.innerHTML = "Добавить  точку";
     button.disabled = false;
 }
 
+function displayPoints()
+{
+    for (let i = 0; i < points.length; i++)
+    {
+        showWayPoint(points[i]);
+    }
+}
+
+function wayPointClick(e)
+{
+    if(deleteSomePoint)
+    {
+        deletePopup.style.display = "none";
+        myMap.removeLayer(e.target);
+        findNearestPoint([e.latlng.lng, e.latlng.lat]);
+        var index = points.indexOf(chosenPoint);
+        if (index !== -1)
+        {
+            points.splice(index, 1);
+        }
+        changeLocation();
+        deleteSomePoint = false;
+    }
+    else
+    {
+        findNearestPoint([e.latlng.lng, e.latlng.lat]);
+        if(currentMarker===null)
+        {
+            showMarker(chosenPoint);
+            currentMarker.on('dragend', dragendMarker);
+            editPopup.style.display = "block";
+            currentMarker.addTo(myMap);
+            myMap.removeLayer(e.target);
+        } 
+    }
+}
+
+function next()
+{
+
+}
+
+function back()
+{
+    points = tempPoints[tempPoints.length-1].slice();
+    changeLocation();
+    tempPoints.pop();
+    let temp = points.slice();
+    tempPoints[tempPoints.length] = temp;
+}
+
+function clearMap()
+{
+    myMap.eachLayer(function (layer) 
+    {
+        myMap.removeLayer(layer);
+    });
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 25,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
+    }).addTo(myMap);
+}
+
 function changeLocation()
 {
-    myMap.removeLayer(pathLayer);
     deleteMarker();
+    clearMap();
     displayPath(points);
+    displayPoints();
 }
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) 
@@ -170,6 +254,7 @@ function degToRad(deg)
 
 function readFromFile(input)
 {
+    clearMap();
     let file = input.files[0];
   
     let reader = new FileReader();
@@ -197,11 +282,11 @@ function fillArray(xmlDoc)
 {
     let rows = xmlDoc.getElementsByTagName("trkpt");
     points = new Array(rows.length);
-    console.log(points.length);
     for (let i = 0; i < rows.length; i++)
     {
         points[i] = [Number(rows[i].getAttribute("lon")), Number(rows[i].getAttribute("lat"))];
     }
+    displayPoints();
 }
 
 function setLocation()
@@ -237,11 +322,11 @@ function save()
 
 function download() 
 {
-    var serializer = new XMLSerializer();
-    var XML = serializer.serializeToString(xmlFile);
-    var filename = "[Updated]" + document.getElementById("gpx-file").files[0].name;
-    var pom = document.createElement('a');
-    var bb = new Blob([XML], {type: 'text/plain'});
+    let serializer = new XMLSerializer();
+    let stringXML = serializer.serializeToString(xmlFile);
+    let filename = "[Updated]" + document.getElementById("gpx-file").files[0].name;
+    let pom = document.createElement('a');
+    let bb = new Blob([stringXML], {type: 'text/plain'});
     
     pom.setAttribute('href', window.URL.createObjectURL(bb));
     pom.setAttribute('download', filename);
