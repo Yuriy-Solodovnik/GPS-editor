@@ -24,6 +24,10 @@ header h3, button, input {
   font-size: 14px;
 }
 
+#save:hover {
+  background-color: rgb(71, 106, 15);
+}
+
 #editBox button, input {
   background-color: rgb(0, 208, 255);
   color: #fff;

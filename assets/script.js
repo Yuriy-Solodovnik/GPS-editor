@@ -1,6 +1,7 @@
 let myMap = L.map("map").setView([47.563, 24.1130], 3);
 let popup = document.getElementById("myPopup");
-let addIndex;
+let saveBtn = document.getElementById("save");
+let addIndex, xmlFile;
 let addNewPoint = false;
 let chosenPoint = null;
 let currentMarker = null;
@@ -15,6 +16,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     zoomOffset: -1,
     accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
 }).addTo(myMap);
+saveBtn.disabled = true;
 
 function addPoint()
 {
@@ -135,6 +137,9 @@ function deleteMarker()
     myMap.removeLayer(currentMarker);
     currentMarker = null;
     popup.style.display = "none";
+    let button = document.getElementById("addPointBtn");
+    button.innerHTML = "Добавить  точку";
+    button.disabled = false;
 }
 
 function changeLocation()
@@ -181,15 +186,18 @@ function readFromFile(input)
     reader.onload = function() 
     {
         let parser = new DOMParser();
-        fillArray(parser.parseFromString(reader.result, "text/xml"));
-        setLocation()
+        xmlFile = parser.parseFromString(reader.result, "text/xml");
+        fillArray(xmlFile);
+        setLocation();
+        saveBtn.disabled = false;
     };
 }
 
 function fillArray(xmlDoc)
 {
-    let rows = xmlDoc.getElementsByTagName("trkpt")
+    let rows = xmlDoc.getElementsByTagName("trkpt");
     points = new Array(rows.length);
+    console.log(points.length);
     for (let i = 0; i < rows.length; i++)
     {
         points[i] = [Number(rows[i].getAttribute("lon")), Number(rows[i].getAttribute("lat"))];
@@ -216,5 +224,31 @@ function setLocation()
 
 function save()
 {
-   
+    let content = "";
+    for(point of points)
+    {
+        content += `\n<trkpt lat="${point[1]}" lon="${point[0]}">\n
+                        <ele>0</ele>\n
+                    </trkpt>\n`;
+    }
+    xmlFile.getElementsByTagName("trkseg")[0].innerHTML = content;
+    download(); 
+}
+
+function download() 
+{
+    var serializer = new XMLSerializer();
+    var XML = serializer.serializeToString(xmlFile);
+    var filename = "[Updated]" + document.getElementById("gpx-file").files[0].name;
+    var pom = document.createElement('a');
+    var bb = new Blob([XML], {type: 'text/plain'});
+    
+    pom.setAttribute('href', window.URL.createObjectURL(bb));
+    pom.setAttribute('download', filename);
+    
+    pom.dataset.downloadurl = ['text/plain', pom.download, pom.href].join(':');
+    pom.draggable = true; 
+    pom.classList.add('dragout');
+    
+    pom.click();
 }
