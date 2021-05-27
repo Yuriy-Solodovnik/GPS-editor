@@ -8,24 +8,40 @@ let chosenPoint = null;
 let currentMarker = null;
 let pathLayer = null;
 let tempPoints = [];
-let points = null;
+let points = [];
+let currentWayIndexOffset = -1;
 
-clearMap();
+let baseLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 25,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
+    }).addTo(myMap);
+baseLayer.myId = "Base";
+
 saveBtn.disabled = true;
 
 function addPoint()
 {
-    addNewPoint = true;
-    let button = document.getElementById("addPointBtn");
-    button.innerHTML = "Выберите место";
-    button.disabled = true;
+    if(points != null)
+    {
+        addNewPoint = true;
+        let button = document.getElementById("addPointBtn");
+        button.innerHTML = "Выберите место";
+        button.disabled = true;
+    }
 }
 
 
 function deletePoint()
 {
-    deleteSomePoint = true;
-    deletePopup.style.display = "block";
+    if(points != null)
+    {
+        deleteSomePoint = true;
+        deletePopup.style.display = "block";
+    }
 }
 
 function replacePoint(oldPoint, newPoint)
@@ -196,37 +212,40 @@ function wayPointClick(e)
 
 function next()
 {
-
+    let currentIndex = tempPoints.length + (currentWayIndexOffset + 1);
+    if (tempPoints[currentIndex] !== undefined)
+    {
+        points = tempPoints[currentIndex].slice();
+        changeLocation();
+        tempPoints.pop();
+        currentWayIndexOffset++;
+    }
 }
 
 function back()
 {
-    points = tempPoints[tempPoints.length-1].slice();
-    changeLocation();
-    tempPoints.pop();
-    let temp = points.slice();
-    tempPoints[tempPoints.length] = temp;
+    let currentIndex = tempPoints.length + (currentWayIndexOffset - 1);
+    if (tempPoints[currentIndex] !== undefined)
+    {
+        points = tempPoints[currentIndex].slice();
+        changeLocation();
+        tempPoints.pop();
+        currentWayIndexOffset--;
+    }
 }
 
 function clearMap()
 {
     myMap.eachLayer(function (layer) 
     {
+        if(layer.myId != "Base")
         myMap.removeLayer(layer);
     });
-
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 25,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: 'pk.eyJ1IjoieXVyaXktc29sb2Rvdm5payIsImEiOiJja293dXdqYXcwOXZhMnJvMnozYzA3bHVmIn0.ANOZVZmuCfs4iJ9IU-_Org'
-    }).addTo(myMap);
 }
 
 function changeLocation()
 {
+    tempPoints.push(points.slice());
     deleteMarker();
     clearMap();
     displayPath(points);
@@ -266,6 +285,9 @@ function readFromFile(input)
     catch
     {
         alert("Не удалось прочитать файл");
+        tempPoints = [];
+        points = [];
+        document.getElementById("editBox").style.display = "none";
     }
   
     reader.onload = function() 
@@ -287,6 +309,8 @@ function fillArray(xmlDoc)
         points[i] = [Number(rows[i].getAttribute("lon")), Number(rows[i].getAttribute("lat"))];
     }
     displayPoints();
+    tempPoints = [];
+    tempPoints.push(points.slice());
 }
 
 function setLocation()
@@ -304,6 +328,7 @@ function setLocation()
     catch
     {
         alert("Не удалось загрузить данные");
+        document.getElementById("editBox").style.display = "none";
     }
 }
 
