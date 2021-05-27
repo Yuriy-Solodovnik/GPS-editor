@@ -68,21 +68,17 @@ html, body  {
 }
 .popup-button:hover {
   background-color: rgba(54, 71, 204, 0.9);
-  border: 3px solid rgb(0, 0, 0);
+  border: 3px solid #00000083;
 }
 
 #editBox {
   display: none;
 }
 
-#editPopup {
-  height: 110px;
-  width: 400px;
-}
-
-#deletePopup {
-  height: 50px;
-  width: 300px;
+#fileBox {
+  border: 2px solid #00000083;
+  border-radius: 10px;
+  background-color: rgba(28, 38, 112, 0.9);;
 }
 
 #previousBtn {
@@ -100,6 +96,8 @@ html, body  {
 }
 
 .popup {
+  height: 110px;
+  width: 400px;
   box-shadow: 0 0 15px rgba(0,0,0,0.5);
   background-color: rgba(255, 255, 255, 0.475);
   position: absolute;

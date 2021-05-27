@@ -1,11 +1,13 @@
 let myMap = L.map("map").setView([47.563, 24.1130], 3);
+myMap.on('click', mapClick);
 let editPopup = document.getElementById("editPopup");
 let deletePopup = document.getElementById("deletePopup");
+let addNewPointPopup = document.getElementById("newPointPopup");
 let saveBtn = document.getElementById("save");
 let addIndex, xmlFile;
-let addNewPoint = false, deleteSomePoint = false;
+let addNewPoint = false, deleteSomePoint = false, addPointToMap = false;
 let chosenPoint = null;
-let currentMarker = null;
+let currentMarker = null, baseMarker = null;
 let pathLayer = null;
 let tempPoints = [];
 let points = [];
@@ -23,14 +25,36 @@ baseLayer.myId = "Base";
 
 saveBtn.disabled = true;
 
+function cancelDelete()
+{
+    deletePopup.style.display = "none";
+    document.getElementById("addPointBtn").disabled = false;
+    deleteSomePoint = false;
+}
+function cancelAdding()
+{
+    addNewPointPopup.style.display = "none";
+    document.getElementById("deletePointBtn").disabled = false;
+    document.getElementById("addPointBtn").disabled = false;
+    document.getElementById("addText").textContent = "Выберите опорную точку";
+    if(baseMarker!=null)
+    {
+        myMap.removeLayer(baseMarker);
+        baseMarker=null;
+    }
+    addNewPoint = false;
+    addPointToMap = false;
+}
+
 function addPoint()
 {
     if(points != null)
     {
         addNewPoint = true;
         let button = document.getElementById("addPointBtn");
-        button.innerHTML = "Выберите место";
         button.disabled = true;
+        addNewPointPopup.style.display = "block";
+        document.getElementById("deletePointBtn").disabled = true;
     }
 }
 
@@ -41,6 +65,7 @@ function deletePoint()
     {
         deleteSomePoint = true;
         deletePopup.style.display = "block";
+        document.getElementById("addPointBtn").disabled = true;
     }
 }
 
@@ -57,26 +82,8 @@ function displayPath(points)
 {
     let path = turf.lineString(points);
     pathLayer = L.geoJSON(path).addTo(myMap);
-    pathLayer.on('click', onPathClick);
     document.getElementById("distance").textContent = (turf.length(path, {units: 'kilometers'})).toFixed(3);
 }
-
-function onPathClick(e)
-{
-    if(addNewPoint)
-    {
-        addPointToArray([e.latlng.lng, e.latlng.lat]);
-        addNewPoint = false;
-    
-        if(currentMarker===null)
-        {
-            showMarker(chosenPoint);
-            currentMarker.on('dragend', dragendMarker);
-            editPopup.style.display = "block";
-            currentMarker.addTo(myMap);
-        }
-    } 
-}  
 
 function getScale(a, b, c)
 {
@@ -86,27 +93,22 @@ function getScale(a, b, c)
 
 function addPointToArray(lnglat)
 {
-    findNearestPoint(lnglat);
-    if(addIndex < points.length - 1 && addIndex > 0)
+    addIndex = points.indexOf(chosenPoint);
+    if(points[addIndex - 1] === undefined)
     {
-        let fromPrevious = getScale(
-                                getDistanceFromLatLonInKm(points[addIndex - 1][1], points[addIndex - 1][0], chosenPoint[1], chosenPoint[0]),
-                                getDistanceFromLatLonInKm(chosenPoint[1], chosenPoint[0], lnglat[1], lnglat[0]),
-                                getDistanceFromLatLonInKm(points[addIndex - 1][1], points[addIndex - 1][0], lnglat[1], lnglat[0])
-                                );
-        let fromNext = getScale(
-                            getDistanceFromLatLonInKm(points[addIndex + 1][1], points[addIndex + 1][0], chosenPoint[1], chosenPoint[0]),
-                            getDistanceFromLatLonInKm(chosenPoint[1], chosenPoint[0], lnglat[1], lnglat[0]), 
-                            getDistanceFromLatLonInKm(points[addIndex + 1][1], points[addIndex + 1][0], lnglat[1], lnglat[0])
-                            );
-        fromNext < fromPrevious ? addIndex = 1 : addIndex = 0;
+        addIndex = 0;
+    }
+    else if((points[addIndex + 1] === undefined))
+    {
+        addIndex = points.indexOf(chosenPoint);
     }
     else
     {
-        addIndex == 0 ? addIndex = 1 : addIndex = 0;
+        let wayToPrevious = getDistance(lnglat[1], lnglat[0], points[addIndex - 1][1], points[addIndex - 1][0]);
+        let wayToNext = getDistance(lnglat[1], lnglat[0], points[addIndex + 1][1], points[addIndex + 1][0]);
+        wayToNext < wayToPrevious ? addIndex = 1 : addIndex = 0;
     }
     points.splice(points.indexOf(chosenPoint) + addIndex, 0, lnglat);
-    chosenPoint = lnglat;
 }
 
 function dragendMarker(e)
@@ -125,7 +127,7 @@ function findNearestPoint(lnglat)
     let nearWay = Infinity;
     for (let i = 0; i < points.length; i++) 
     {
-        let currentWay = getDistanceFromLatLonInKm(points[i][1], points[i][0], lnglat[1],lnglat[0]);
+        let currentWay = getDistance(points[i][1], points[i][0], lnglat[1],lnglat[0]);
         if(currentWay < nearWay)
         {
             nearWay = currentWay;
@@ -183,7 +185,15 @@ function displayPoints()
 
 function wayPointClick(e)
 {
-    if(deleteSomePoint)
+    if(addNewPoint)
+    {
+        findNearestPoint([e.latlng.lng, e.latlng.lat]);
+        addPointToMap = true;
+        if(baseMarker===null)
+        baseMarker = new L.Marker([e.latlng.lat, e.latlng.lng]).addTo(myMap);
+        document.getElementById("addText").textContent = "Веберите место на карте";
+    }
+    else if(deleteSomePoint)
     {
         deletePopup.style.display = "none";
         myMap.removeLayer(e.target);
@@ -195,18 +205,36 @@ function wayPointClick(e)
         }
         changeLocation();
         deleteSomePoint = false;
+        document.getElementById("addPointBtn").disabled = false;
     }
     else
     {
-        findNearestPoint([e.latlng.lng, e.latlng.lat]);
         if(currentMarker===null)
         {
+            findNearestPoint([e.latlng.lng, e.latlng.lat]);
             showMarker(chosenPoint);
             currentMarker.on('dragend', dragendMarker);
             editPopup.style.display = "block";
             currentMarker.addTo(myMap);
             myMap.removeLayer(e.target);
         } 
+    }
+}
+
+function mapClick(e)
+{
+    if(addPointToMap)
+    {
+        addPointToArray([e.latlng.lng, e.latlng.lat]);
+        addNewPoint = false;
+        addPointToMap = false;
+        chosenPoint = null;
+        myMap.removeLayer(baseMarker);
+        baseMarker=null;
+        addNewPointPopup.style.display = "none";
+        document.getElementById("addText").textContent = "Выберите опорную точку";
+        document.getElementById("deletePointBtn").disabled = false;
+        changeLocation();
     }
 }
 
@@ -252,7 +280,7 @@ function changeLocation()
     displayPoints();
 }
 
-function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) 
+function getDistance(lat1,lon1,lat2,lon2) 
 {
     let R = 6378.14;
     let dLat = degToRad(lat2-lat1);
