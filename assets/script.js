@@ -4,7 +4,7 @@ let editPopup = document.getElementById("editPopup");
 let deletePopup = document.getElementById("deletePopup");
 let addNewPointPopup = document.getElementById("newPointPopup");
 let saveBtn = document.getElementById("save");
-let addIndex, xmlFile;
+let xmlFile;
 let addNewPoint = false, deleteSomePoint = false, addPointToMap = false;
 let chosenPoint = null;
 let currentMarker = null, baseMarker = null;
@@ -31,6 +31,7 @@ function cancelDelete()
     document.getElementById("addPointBtn").disabled = false;
     deleteSomePoint = false;
 }
+
 function cancelAdding()
 {
     addNewPointPopup.style.display = "none";
@@ -93,22 +94,7 @@ function getScale(a, b, c)
 
 function addPointToArray(lnglat)
 {
-    addIndex = points.indexOf(chosenPoint);
-    if(points[addIndex - 1] === undefined)
-    {
-        addIndex = 0;
-    }
-    else if((points[addIndex + 1] === undefined))
-    {
-        addIndex = points.indexOf(chosenPoint);
-    }
-    else
-    {
-        let wayToPrevious = getDistance(lnglat[1], lnglat[0], points[addIndex - 1][1], points[addIndex - 1][0]);
-        let wayToNext = getDistance(lnglat[1], lnglat[0], points[addIndex + 1][1], points[addIndex + 1][0]);
-        wayToNext < wayToPrevious ? addIndex = 1 : addIndex = 0;
-    }
-    points.splice(points.indexOf(chosenPoint) + addIndex, 0, lnglat);
+    points.splice(points.indexOf(chosenPoint) + 1, 0, lnglat);
 }
 
 function dragendMarker(e)
