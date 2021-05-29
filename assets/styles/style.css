@@ -84,14 +84,14 @@ html, body  {
 #previousBtn {
   width: 30px;
   height: 30px;
-  background-image: url("images/a2.png");
+  background-image: url("../images/a2.png");
   background-position: -38px -34px;
 }
 
 #nextBtn {
   width: 30px;
   height: 30px;
-  background-image: url("images/a2.png");
+  background-image: url("../images/a2.png");
   background-position: 1px -34px;
 }
 
