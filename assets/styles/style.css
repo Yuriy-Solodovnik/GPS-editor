@@ -7,11 +7,41 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
+
+  #map {
+    height: 55%;
+  }
+
+  .popup {
+    left: 5%;
+  }
+}
+
+.myFileUploader {
+  border: 1px solid #ccc;
+  display: block;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 0px;
+  padding: 3px;
+  margin: 10px;
+  background-color: rgb(0, 100, 123);
+  width: 114px;
+  height: 24px;
+}
+
+.myFileUploader:hover {
+  background-color: rgb(1, 71, 87);
+}
+
+input[type="file"] {
+  display: none;
 }
 
 .flex {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 header {
@@ -23,14 +53,23 @@ header {
   color: #fff;
 }
 
-header h3, button, input {
+header h3, 
+button {
   margin: 10px;
   border-radius: 10px;
 }
 
-#fileBox button, input {
+#fileBox, #editBox {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#fileBox button{
   background-color: rgb(141, 211, 29);
   color: #fff;
+  width: 120px;
+  height: 30px;
   font-weight: 700;
   font-size: 14px;
 }
@@ -39,17 +78,21 @@ header h3, button, input {
   background-color: rgb(71, 106, 15);
 }
 
-#editBox button, input {
+#editBox button {
   background-color: rgb(0, 208, 255);
   color: #fff;
   font-weight: 700;
-  font-size: 13px;
+  height: 30px;
+}
+
+#editBox button:hover {
+  background-color: rgb(1, 123, 150);
 }
 
 #map {
   border-radius: 10px;
   margin: 2%;
-  height: 80%;
+  height: 85%;
   width: 96%;
   border: 1px solid rgb(54, 71, 204);
 }
@@ -57,13 +100,14 @@ header h3, button, input {
 #info {
   position: relative;
   margin: 1%;
-  top: 93%;
+  top: 88%;
   z-index: 999;
+  font-size: 1.3em;
 }
 
 html, body  {
-  background-image: url("https://img.freepik.com/free-photo/grungy-white-background-of-natural-cement-or-stone-old-texture_1258-28352.jpg?size=626&ext=jpg");
-  background-size: 100%;
+  background-image: url("../images/background.jpg");
+  background-size: cover;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -89,19 +133,21 @@ html, body  {
 #fileBox {
   border: 2px solid #00000083;
   border-radius: 10px;
-  background-color: rgba(28, 38, 112, 0.9);;
+  background-color: rgba(28, 38, 112, 0.9);
+}
+
+#addPointBtn, #deletePointBtn {
+  width: 120px;
 }
 
 #previousBtn {
   width: 30px;
-  height: 30px;
   background-image: url("../images/a2.png");
   background-position: -38px -34px;
 }
 
 #nextBtn {
   width: 30px;
-  height: 30px;
   background-image: url("../images/a2.png");
   background-position: 1px -34px;
 }
@@ -115,7 +161,7 @@ html, body  {
   text-align: center;
   border-radius: 10px;
   top: 110px;
-  left: 35%;
+  left: 25%;
   border: 3px solid rgba(54, 71, 204, 0.2);
   z-index: 999;
   display: none;

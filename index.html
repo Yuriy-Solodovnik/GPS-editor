@@ -22,7 +22,10 @@
                 <button id="deletePointBtn" onclick="deletePoint()">Удалить точку</button>
             </div>
             <div id="fileBox">
-                <input id="gpx-file" type="file" accept=".gpx" onChange="readFromFile(this)"/>
+                <label class="myFileUploader">
+                    Загрузить файл
+                    <input id="gpx-file" type="file" accept=".gpx" onChange="readFromFile(this)"/>
+                </label>
                 <button id="save" onclick="save()">Сохранить</button>
             </div>
         </div>
