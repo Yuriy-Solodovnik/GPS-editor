@@ -13,23 +13,26 @@
 </head>
 <body>
     <header>
-        <h3>GPS Editor</h3>
-        <div id="editBox">
-            <button id="previousBtn" onclick="back()"></button>
-            <button id="nextBtn" onclick="next()"></button>
-            <button id="addPointBtn" onclick="addPoint()">Добавить  точку</button>
-            <button id="deletePointBtn" onclick="deletePoint()">Удалить точку</button>
-        </div>
-        <div id="fileBox">
-            <input id="gpx-file" type="file" accept=".gpx" onChange="readFromFile(this)"/>
-            <button id="save" onclick="save()">Сохранить</button>
+        <div class="flex">
+            <h3>GPS Editor</h3>
+            <div id="editBox">
+                <button id="previousBtn" onclick="back()"></button>
+                <button id="nextBtn" onclick="next()"></button>
+                <button id="addPointBtn" onclick="addPoint()">Добавить  точку</button>
+                <button id="deletePointBtn" onclick="deletePoint()">Удалить точку</button>
+            </div>
+            <div id="fileBox">
+                <input id="gpx-file" type="file" accept=".gpx" onChange="readFromFile(this)"/>
+                <button id="save" onclick="save()">Сохранить</button>
+            </div>
         </div>
     </header>
-    <div id="map"></div>
-    <div id="info">
-        <label>Дистанция (км)</label>
-        <span id="distance"></span>
-    </div>  
+    <div id="map">
+        <div id="info">
+            <label>Дистанция (км)</label>
+            <span id="distance"></span>
+        </div>  
+    </div>
     <div id="editPopup" class="popup">
         <div class="popup-content">
             <div class="popup-header">
