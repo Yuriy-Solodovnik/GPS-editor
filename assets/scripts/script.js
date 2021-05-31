@@ -12,7 +12,7 @@ let pathLayer = null;
 let tempPoints = [];
 let points = [];
 let currentWayIndexOffset = -1;
-
+let alt = geolocationCoordinatesInstance.altitude
 let baseLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 25,
@@ -86,12 +86,6 @@ function displayPath(points)
     document.getElementById("distance").textContent = (turf.length(path, {units: 'kilometers'})).toFixed(3);
 }
 
-function getScale(a, b, c)
-{
-    let p = (a + b + c)/2;
-    return Math.sqrt(p*(p-a)*(p-b)*(p-c));
-}
-
 function addPointToArray(lnglat)
 {
     points.splice(points.indexOf(chosenPoint) + 1, 0, lnglat);
@@ -144,6 +138,7 @@ function showMarker(location)
     }), draggable: true});
     currentMarker.on('dragend', dragendMarker);
     editPopup.style.display = "block";
+    
     currentMarker.addTo(myMap);
 }
 function deleteMarker()
