@@ -28,7 +28,7 @@
   padding: 3px;
   margin: 10px;
   background-color: rgb(0, 100, 123);
-  width: 124px;
+  width: 154px;
   height: 24px;
 }
 
@@ -168,6 +168,11 @@ html, body  {
   z-index: 999;
   display: none;
   animation: fromTop 0.5s;
+}
+
+img {
+  width: 20px;
+  height: 15px;
 }
 
 @keyframes fromTop {

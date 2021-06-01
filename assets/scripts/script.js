@@ -12,7 +12,6 @@ let pathLayer = null;
 let tempPoints = [];
 let points = [];
 let currentWayIndexOffset = -1;
-let alt = geolocationCoordinatesInstance.altitude
 let baseLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 25,
@@ -59,7 +58,6 @@ function addPoint()
     }
 }
 
-
 function deletePoint()
 {
     if(points != null)
@@ -77,13 +75,6 @@ function replacePoint(oldPoint, newPoint)
     {
         points[index] = newPoint;
     }
-}
-
-function displayPath(points)
-{
-    let path = turf.lineString(points);
-    pathLayer = L.geoJSON(path).addTo(myMap);
-    document.getElementById("distance").textContent = (turf.length(path, {units: 'kilometers'})).toFixed(3);
 }
 
 function addPointToArray(lnglat)
@@ -128,6 +119,22 @@ function showWayPoint(location)
         })}).addTo(myMap);
     wayPoint.on('click', wayPointClick);
 }
+
+function displayPath(points)
+{
+    let path = turf.lineString(points);
+    pathLayer = L.geoJSON(path).addTo(myMap);
+    document.getElementById("distance").textContent = (turf.length(path, {units: 'kilometers'})).toFixed(3);
+}
+
+function displayPoints()
+{
+    for (let i = 0; i < points.length; i++)
+    {
+        showWayPoint(points[i]);
+    }
+}
+
 function showMarker(location)
 {
     currentMarker = new L.Marker([location[1], location[0]], {icon: L.icon({
@@ -154,14 +161,6 @@ function deleteMarker()
     let button = document.getElementById("addPointBtn");
     button.innerHTML = "Добавить  точку";
     button.disabled = false;
-}
-
-function displayPoints()
-{
-    for (let i = 0; i < points.length; i++)
-    {
-        showWayPoint(points[i]);
-    }
 }
 
 function wayPointClick(e)
