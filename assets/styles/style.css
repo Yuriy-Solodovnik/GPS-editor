@@ -1,0 +1,185 @@
+*{
+  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+@media (max-width:500px) {
+  .flex {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  #map {
+    height: 55%;
+  }
+
+  .popup {
+    left: 3px;
+    width: 200px;
+    height: 100px;
+  }
+}
+
+.myFileUploader {
+  border: 1px solid #ccc;
+  display: block;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 0px;
+  padding: 3px;
+  margin: 10px;
+  background-color: rgb(0, 100, 123);
+  width: 154px;
+  height: 24px;
+}
+
+.myFileUploader:hover {
+  background-color: rgb(1, 71, 87);
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header {
+  width: 96%;
+  margin: 2%;
+  letter-spacing: 3px;
+  border-radius: 10px;
+  background: rgb(54, 71, 204);
+  color: #fff;
+}
+
+header h3, 
+button {
+  margin: 10px;
+  border-radius: 10px;
+}
+
+#fileBox, #editBox {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#fileBox button{
+  background-color: rgb(141, 211, 29);
+  color: #fff;
+  width: 130px;
+  height: 30px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+#save:hover {
+  background-color: rgb(71, 106, 15);
+}
+
+#editBox button {
+  background-color: rgb(0, 208, 255);
+  color: #fff;
+  font-weight: 700;
+  height: 30px;
+}
+
+#editBox button:hover {
+  background-color: rgb(1, 123, 150);
+}
+
+#map {
+  border-radius: 10px;
+  margin: 2%;
+  height: 85%;
+  width: 96%;
+  border: 1px solid rgb(54, 71, 204);
+}
+
+#info {
+  position: relative;
+  margin: 1%;
+  top: 88%;
+  z-index: 999;
+  font-size: 1.3em;
+}
+
+html, body  {
+  background-image: url("../images/background.jpg");
+  background-size: cover;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.popup-button{
+  border-radius: 10px;
+  background-color: rgba(54, 71, 204, 0.2);
+  border: 3px solid #00000083;
+  height: 35px;
+  width: 115px;
+  font-size: 1em;
+}
+.popup-button:hover {
+  background-color: rgba(54, 71, 204, 0.9);
+  border: 3px solid #00000083;
+}
+
+#editBox {
+  display: none;
+}
+
+#fileBox {
+  border: 2px solid #00000083;
+  border-radius: 10px;
+  background-color: rgba(28, 38, 112, 0.9);
+}
+
+#addPointBtn, #deletePointBtn {
+  width: 130px;
+}
+
+#previousBtn {
+  width: 30px;
+  background-image: url("../images/a2.png");
+  background-position: -38px -34px;
+}
+
+#nextBtn {
+  width: 30px;
+  background-image: url("../images/a2.png");
+  background-position: 1px -34px;
+}
+
+.popup {
+  height: 110px;
+  width: 400px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  background-color: rgba(255, 255, 255, 0.475);
+  position: absolute;
+  text-align: center;
+  border-radius: 10px;
+  top: 110px;
+  left: 25%;
+  border: 3px solid rgba(54, 71, 204, 0.2);
+  z-index: 999;
+  display: none;
+  animation: fromTop 0.5s;
+}
+
+img {
+  width: 20px;
+  height: 15px;
+}
+
+@keyframes fromTop {
+  0% {
+    top: -5px;
+  }
+  100% {
+    top: 110px;
+  }
+}

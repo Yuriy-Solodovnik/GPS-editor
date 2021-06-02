@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Editor</title>
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="assets/styles/style.css"/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
+</head>
+<body>
+    <header>
+        <div class="flex">
+            <h3>GPS Editor</h3>
+            <div id="editBox">
+                <button id="previousBtn" onclick="back()"></button>
+                <button id="nextBtn" onclick="next()"></button>
+                <button id="addPointBtn" onclick="addPoint()">Добавить  точку</button>
+                <button id="deletePointBtn" onclick="deletePoint()">Удалить точку</button>
+            </div>
+            <div id="fileBox">
+                <label class="myFileUploader">
+                    <img src="assets/images/upload.png" alt="upload"/>
+                    Загрузить файл
+                    <input id="gpx-file" type="file" accept=".gpx" onChange="readFromFile(this)"/>
+                </label>
+                <button id="save" onclick="save()">Сохранить</button>
+            </div>
+        </div>
+    </header>
+    <div id="map">
+        <div id="info">
+            <label>Дистанция (км)</label>
+            <span id="distance"></span>
+        </div>  
+    </div>
+    <div id="editPopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3>Перетащите маркер на новую позицию</h3>
+            </div>
+            <div class="popup-body">
+                <button class="popup-button" onclick="deleteMarker()">Отмена</button>
+            </div>
+        </div>
+    </div>  
+    <div id="deletePopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3>Выберите точку</h3>
+            </div>
+            <div class="popup-body">
+                <button class="popup-button" onclick="cancelDelete()">Отмена</button>
+            </div>
+        </div>
+    </div>
+    <div id="newPointPopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3 id="addText">Выберите опорную точку</h3>
+            </div>
+            <div class="popup-body">
+                <button class="popup-button" onclick="cancelAdding()">Отмена</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="assets/scripts/script.js"></script>
+<script src="assets/scripts/workWithFile.js"></script>
+</html>
