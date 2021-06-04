@@ -24,6 +24,32 @@ baseLayer.myId = "Base";
 
 saveBtn.disabled = true;
 
+//----Buttons clicks handlers----//
+
+function next()
+{
+    let currentIndex = tempPoints.length + (currentWayIndexOffset + 1);
+    if (tempPoints[currentIndex] !== undefined)
+    {
+        points = tempPoints[currentIndex].slice();
+        changeLocation();
+        tempPoints.pop();
+        currentWayIndexOffset++;
+    }
+}
+
+function back()
+{
+    let currentIndex = tempPoints.length + (currentWayIndexOffset - 1);
+    if (tempPoints[currentIndex] !== undefined)
+    {
+        points = tempPoints[currentIndex].slice();
+        changeLocation();
+        tempPoints.pop();
+        currentWayIndexOffset--;
+    }
+}
+
 function cancelDelete()
 {
     deletePopup.style.display = "none";
@@ -68,6 +94,8 @@ function deletePoint()
     }
 }
 
+//----Work with array----//
+
 function replacePoint(oldPoint, newPoint)
 {
     let index = points.indexOf(oldPoint);
@@ -80,17 +108,6 @@ function replacePoint(oldPoint, newPoint)
 function addPointToArray(lnglat)
 {
     points.splice(points.indexOf(chosenPoint) + 1, 0, lnglat);
-}
-
-function dragendMarker(e)
-{
-    let marker = e.target;
-    let position = marker.getLatLng();
-    replacePoint(chosenPoint, [position.lng, position.lat]);
-    changeLocation();
-    let button = document.getElementById("addPointBtn");
-    button.innerHTML = "Добавить  точку";
-    button.disabled = false;
 }
 
 function findNearestPoint(lnglat)
@@ -107,6 +124,8 @@ function findNearestPoint(lnglat)
         }
     }
 }
+
+//---Displaying layers----//
 
 function showWayPoint(location)
 {
@@ -163,6 +182,8 @@ function deleteMarker()
     button.disabled = false;
 }
 
+//----Map and marker clicks handlers----//
+
 function wayPointClick(e)
 {
     if(addNewPoint)
@@ -218,28 +239,15 @@ function mapClick(e)
     }
 }
 
-function next()
+function dragendMarker(e)
 {
-    let currentIndex = tempPoints.length + (currentWayIndexOffset + 1);
-    if (tempPoints[currentIndex] !== undefined)
-    {
-        points = tempPoints[currentIndex].slice();
-        changeLocation();
-        tempPoints.pop();
-        currentWayIndexOffset++;
-    }
-}
-
-function back()
-{
-    let currentIndex = tempPoints.length + (currentWayIndexOffset - 1);
-    if (tempPoints[currentIndex] !== undefined)
-    {
-        points = tempPoints[currentIndex].slice();
-        changeLocation();
-        tempPoints.pop();
-        currentWayIndexOffset--;
-    }
+    let marker = e.target;
+    let position = marker.getLatLng();
+    replacePoint(chosenPoint, [position.lng, position.lat]);
+    changeLocation();
+    let button = document.getElementById("addPointBtn");
+    button.innerHTML = "Добавить  точку";
+    button.disabled = false;
 }
 
 function clearMap()
@@ -270,8 +278,8 @@ function getDistance(lat1,lon1,lat2,lon2)
       Math.cos(degToRad(lat1)) * Math.cos(degToRad(lat2)) * 
       Math.sin(dLon/2) * Math.sin(dLon/2); 
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    let d = R * c;
-    return d;
+    let distance = R * c;
+    return distance;
 }
   
 function degToRad(deg) 
