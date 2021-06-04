@@ -7,7 +7,7 @@ function readFromFile(input)
   
     try
     {
-    reader.readAsText(file);
+        reader.readAsText(file);
     }
     catch
     {
@@ -79,8 +79,7 @@ function download()
     let filename = "[Updated]" + document.getElementById("gpx-file").files[0].name;
     let pom = document.createElement('a');
     let bb = new Blob([stringXML], {type: 'text/plain'});
-    
     pom.setAttribute('href', window.URL.createObjectURL(bb));
-    pom.setAttribute('download', filename);    
+    pom.setAttribute('download', filename);
     pom.click();
 }

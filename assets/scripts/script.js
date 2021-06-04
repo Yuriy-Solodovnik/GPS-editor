@@ -86,12 +86,14 @@ function addPoint()
 
 function deletePoint()
 {
-    if(points != null)
+    if(points != null && points.length > 2)
     {
         deleteSomePoint = true;
         deletePopup.style.display = "block";
         document.getElementById("addPointBtn").disabled = true;
     }
+    else 
+        alert("Нельзя отобразить маршрут включающий меньше двух точек");
 }
 
 //----Work with array----//
