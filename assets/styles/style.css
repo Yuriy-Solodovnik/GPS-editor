@@ -11,12 +11,6 @@
   #map {
     height: 55%;
   }
-
-  .popup {
-    left: 3px;
-    width: 200px;
-    height: 100px;
-  }
 }
 
 .myFileUploader {
@@ -120,7 +114,7 @@ html, body  {
   background-color: rgba(54, 71, 204, 0.2);
   border: 3px solid #00000083;
   height: 35px;
-  width: 115px;
+  width: 95px;
   font-size: 1em;
 }
 .popup-button:hover {
@@ -155,19 +149,18 @@ html, body  {
 }
 
 .popup {
-  height: 110px;
-  width: 400px;
+  position: absolute;
+  width: 30%;
   box-shadow: 0 0 15px rgba(0,0,0,0.5);
   background-color: rgba(255, 255, 255, 0.475);
-  position: absolute;
   text-align: center;
   border-radius: 10px;
-  top: 110px;
-  left: 25%;
+  top: 2%;
+  left: calc(50% - 15%);
   border: 3px solid rgba(54, 71, 204, 0.2);
   z-index: 999;
   display: none;
-  animation: fromTop 0.5s;
+  animation: fromTop 0.75s;
 }
 
 img {
@@ -177,9 +170,9 @@ img {
 
 @keyframes fromTop {
   0% {
-    top: -5px;
+    top: -10%;
   }
   100% {
-    top: 110px;
+    top: 2%;
   }
 }
